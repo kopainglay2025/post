@@ -45,10 +45,9 @@ def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
 async def update_all_existing_messages():
     last_message_id = 0
     while True:
-        messages = await app.get_chat_history(CHANNEL_ID, limit=100, offset_id=last_message_id)
-        if not messages:
-            break
-        for message in messages:
+        count = 0
+        async for message in app.get_chat_history(CHANNEL_ID, limit=100, offset_id=last_message_id):
+            count += 1
             if message.reply_markup:
                 new_markup, changed = replace_buttons(message.reply_markup)
                 if changed:
@@ -61,7 +60,10 @@ async def update_all_existing_messages():
                         err_msg = f"[FAILED] Message ID: {message.message_id} - {e}"
                         print(err_msg)
                         logging.error(err_msg)
-        last_message_id = messages[-1].message_id
+            last_message_id = message.message_id
+        if count == 0:
+            break
+
 
 # ======= Handler for new messages =======
 @app.on_message(filters.channel & (filters.text | filters.photo | filters.video))

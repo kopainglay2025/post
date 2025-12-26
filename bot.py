@@ -8,9 +8,9 @@ API_ID = 27333186
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
 BOT_TOKEN = "7941502127:AAHoM2MnlScueLMzv44nnYFZr9AlaW4HF7U"
 
-CHANNEL_ID = "@MKSMOVIECHANNEL"
-OLD_LINK = "https://t.me/RMC_Delivery_Servicebot"
-NEW_LINK = "https://t.me/IU_MM_BOT"
+CHANNEL_ID = "-1001943967146"
+OLD_LINK = "https://t.me/sender_RMC_bot"
+NEW_LINK = "https://t.me/RMC_Delivery_Servicebot"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -56,8 +56,8 @@ async def update_message(message_id: int):
 
 async def main():
     async with app:
-        start_id = 216
-        end_id = 218
+        start_id = 326
+        end_id = 346
         for message_id in range(start_id, end_id + 1):
             await update_message(message_id)
             await asyncio.sleep(1.5)  # small delay to avoid flood limits

@@ -4,12 +4,12 @@ import logging
 from datetime import datetime
 
 # ====== Config ======
-API_ID = 123456          # သင့် API ID
-API_HASH = "your_api_hash"
-BOT_TOKEN = "your_bot_token"
+API_ID = 27333186      # သင့် API ID
+API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
+BOT_TOKEN = "7941502127:AAHoM2MnlScueLMzv44nnYFZr9AlaW4HF7U"
 
-CHANNEL_ID = "@your_channel_username"  # Channel username or ID
-OLD_LINK = "https://t.me/sender_RMC_bot"
+CHANNEL_ID = "-1001949716878"  # Channel username or ID
+OLD_LINK = "https://t.me/IU_MM_BOT"
 NEW_LINK = "https://t.me/RMC_Delivery_Servicebot"
 
 LOG_FILE = "button_update_log.txt"  # log file path

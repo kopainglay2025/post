@@ -1,7 +1,6 @@
 from pyrogram import Client, filters, types
-import asyncio
 import logging
-from datetime import datetime
+import asyncio
 
 # ====== Config ======
 API_ID = 27333186       # သင့် API ID
@@ -12,7 +11,7 @@ CHANNEL_USERNAME = "@MKSMOVIECHANNEL"  # Must include @
 OLD_LINK = "https://t.me/IU_MM_BOT"
 NEW_LINK = "https://t.me/RMC_Delivery_Servicebot"
 
-LOG_FILE = "button_update_log.txt"  # log file path
+LOG_FILE = "button_update_log.txt"
 
 # ====================
 
@@ -42,29 +41,6 @@ def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
         new_keyboard.append(new_row)
     return types.InlineKeyboardMarkup(new_keyboard), changed
 
-# ======= Update all existing messages =======
-async def update_all_existing_messages():
-    last_message_id = 0
-    while True:
-        count = 0
-        async for message in app.get_chat_history(CHANNEL_USERNAME, limit=100, offset_id=last_message_id):
-            count += 1
-            if message.reply_markup:
-                new_markup, changed = replace_buttons(message.reply_markup)
-                if changed:
-                    try:
-                        await message.edit_reply_markup(reply_markup=new_markup)
-                        log_msg = f"[EXISTING UPDATED] Message ID: {message.message_id}"
-                        print(log_msg)
-                        logging.info(log_msg)
-                    except Exception as e:
-                        err_msg = f"[FAILED] Message ID: {message.message_id} - {e}"
-                        print(err_msg)
-                        logging.error(err_msg)
-            last_message_id = message.message_id
-        if count == 0:
-            break
-
 # ======= Handler for new messages =======
 @app.on_message(filters.channel & (filters.text | filters.photo | filters.video | filters.document))
 async def auto_update_new_message(client, message):
@@ -84,8 +60,6 @@ async def auto_update_new_message(client, message):
 # ======= Run Bot =======
 async def main():
     async with app:
-        print("Updating all existing messages...")
-        await update_all_existing_messages()
         print("Bot is now monitoring new messages...")
         await asyncio.Future()  # Keep running
 

@@ -4,11 +4,11 @@ import logging
 from datetime import datetime
 
 # ====== Config ======
-API_ID = 27333186      # သင့် API ID
+API_ID = 27333186       # သင့် API ID
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
 BOT_TOKEN = "7941502127:AAHoM2MnlScueLMzv44nnYFZr9AlaW4HF7U"
 
-CHANNEL_ID = "-1001949716878"  # Channel username or ID
+CHANNEL_USERNAME = "@MKSMOVIECHANNEL"  # Must include @
 OLD_LINK = "https://t.me/IU_MM_BOT"
 NEW_LINK = "https://t.me/RMC_Delivery_Servicebot"
 
@@ -25,8 +25,9 @@ logging.basicConfig(
 
 app = Client("auto_edit_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
+# ======= Replace buttons function =======
 def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
-    """Inline buttons link replace လုပ်ပြီး ပြန် return"""
+    """Replace OLD_LINK with NEW_LINK in all buttons"""
     new_keyboard = []
     changed = False
     for row in reply_markup.inline_keyboard:
@@ -41,12 +42,12 @@ def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
         new_keyboard.append(new_row)
     return types.InlineKeyboardMarkup(new_keyboard), changed
 
-# ======= Update existing messages with pagination =======
+# ======= Update all existing messages =======
 async def update_all_existing_messages():
     last_message_id = 0
     while True:
         count = 0
-        async for message in app.get_chat_history(CHANNEL_ID, limit=100, offset_id=last_message_id):
+        async for message in app.get_chat_history(CHANNEL_USERNAME, limit=100, offset_id=last_message_id):
             count += 1
             if message.reply_markup:
                 new_markup, changed = replace_buttons(message.reply_markup)
@@ -64,9 +65,8 @@ async def update_all_existing_messages():
         if count == 0:
             break
 
-
 # ======= Handler for new messages =======
-@app.on_message(filters.channel & (filters.text | filters.photo | filters.video))
+@app.on_message(filters.channel & (filters.text | filters.photo | filters.video | filters.document))
 async def auto_update_new_message(client, message):
     if message.reply_markup:
         new_markup, changed = replace_buttons(message.reply_markup)
@@ -81,7 +81,7 @@ async def auto_update_new_message(client, message):
                 print(err_msg)
                 logging.error(err_msg)
 
-# ======= Run bot =======
+# ======= Run Bot =======
 async def main():
     async with app:
         print("Updating all existing messages...")

@@ -5,7 +5,7 @@ import logging
 # ====== Config ======
 API_ID = 27333186       
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
-BOT_TOKEN = "7941502127:AAHoM2MnlScueLMzv44nnYFZr9AlaW4HF7U"
+BOT_TOKEN = "5681598508:AAGbT8p5aun5ehww22bfMMrEhSnN1lIZGQU"
 
 CHANNEL_USERNAME = "@MKSMOVIECHANNEL"  # Must include @
 OLD_LINK = "https://t.me/IU_MM_BOT"

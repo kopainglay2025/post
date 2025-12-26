@@ -64,7 +64,7 @@ async def update_all_existing_messages():
         last_message_id = messages[-1].message_id
 
 # ======= Handler for new messages =======
-@app.on_message(filters.channel & filters.any)
+@app.on_message(filters.channel & (filters.text | filters.photo | filters.video))
 async def auto_update_new_message(client, message):
     if message.reply_markup:
         new_markup, changed = replace_buttons(message.reply_markup)

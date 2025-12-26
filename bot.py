@@ -8,7 +8,7 @@ API_ID = 27333186
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
 BOT_TOKEN = "7941502127:AAHoM2MnlScueLMzv44nnYFZr9AlaW4HF7U"
 
-CHANNEL_ID = "-1001943967146"
+CHANNEL_ID = "@moontest1211"
 OLD_LINK = "https://t.me/sender_RMC_bot"
 NEW_LINK = "https://t.me/RMC_Delivery_Servicebot"
 

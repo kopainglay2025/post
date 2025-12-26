@@ -1,9 +1,9 @@
 from pyrogram import Client, filters, types
-import logging
 import asyncio
+import logging
 
 # ====== Config ======
-API_ID = 27333186       # သင့် API ID
+API_ID = 27333186       
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
 BOT_TOKEN = "7941502127:AAHoM2MnlScueLMzv44nnYFZr9AlaW4HF7U"
 
@@ -41,6 +41,27 @@ def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
         new_keyboard.append(new_row)
     return types.InlineKeyboardMarkup(new_keyboard), changed
 
+# ======= Update all existing messages =======
+async def update_all_existing_messages():
+    print("Updating all existing messages...")
+    try:
+        async for message in app.get_chat_history(CHANNEL_USERNAME, limit=1000):
+            if message.reply_markup:
+                new_markup, changed = replace_buttons(message.reply_markup)
+                if changed:
+                    try:
+                        await message.edit_reply_markup(reply_markup=new_markup)
+                        log_msg = f"[EXISTING UPDATED] Message ID: {message.message_id}"
+                        print(log_msg)
+                        logging.info(log_msg)
+                        await asyncio.sleep(0.1)  # avoid hitting rate limits
+                    except Exception as e:
+                        err_msg = f"[FAILED] Message ID: {message.message_id} - {e}"
+                        print(err_msg)
+                        logging.error(err_msg)
+    except Exception as e:
+        print(f"Failed to fetch chat history: {e}")
+
 # ======= Handler for new messages =======
 @app.on_message(filters.channel & (filters.text | filters.photo | filters.video | filters.document))
 async def auto_update_new_message(client, message):
@@ -60,6 +81,7 @@ async def auto_update_new_message(client, message):
 # ======= Run Bot =======
 async def main():
     async with app:
+        await update_all_existing_messages()
         print("Bot is now monitoring new messages...")
         await asyncio.Future()  # Keep running
 

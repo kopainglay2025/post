@@ -6,8 +6,7 @@ from pyrogram.errors import FloodWait, RPCError
 # ====== Config ======
 API_ID = 27333186
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
-BOT_TOKEN = "6178292287:AAG_n9W0qhOsuPaG1Xs9uP_gMzjWUHbUmww"
-
+BOT_TOKEN = "6482888257:AAFycxg9uulw_KBbdvL_WRHlAayElZZyz7o"
 CHANNEL_ID = "@applemyanmar"
 OLD_LINK = "https://t.me/TM_Uploadbot"
 NEW_LINK = "https://t.me/Domo_Uploadbot"

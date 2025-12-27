@@ -56,8 +56,8 @@ async def update_message(message_id: int):
 
 async def main():
     async with app:
-        start_id = 326
-        end_id = 346
+        start_id = 15
+        end_id = 220
         for message_id in range(start_id, end_id + 1):
             await update_message(message_id)
             await asyncio.sleep(1.5)  # small delay to avoid flood limits

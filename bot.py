@@ -6,15 +6,15 @@ from pyrogram.errors import FloodWait, RPCError
 # ====== Config ======
 API_ID = 27333186
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
-BOT_TOKEN = "6219849752:AAEkgxQ66aHE_CnF5MDWpHQKoElxakNM0Lk"
+BOT_TOKEN = "6178292287:AAG_n9W0qhOsuPaG1Xs9uP_gMzjWUHbUmww
 
-CHANNEL_ID = "@moontest1211"
-OLD_LINK = "https://t.me/sender_RMC_bot"
-NEW_LINK = "https://t.me/RMC_Delivery_Servicebot"
+CHANNEL_ID = "@domo_collection"
+OLD_LINK = "https://t.me/TM_Uploadbot"
+NEW_LINK = "https://t.me/Domo_Uploadbot"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-app = Client("mks_bot_ddupdater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+app = Client("mks_bot_ddhjiupdater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
     """Replace old links with new ones in button markup."""

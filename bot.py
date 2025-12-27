@@ -13,7 +13,7 @@ NEW_LINK = "https://t.me/Domo_Uploadbot"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-app = Client("mks_bot_ddhjiupdater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+app = Client("mks_bot_ddhjriupdater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
     """Replace old links with new ones in button markup."""

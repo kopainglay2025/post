@@ -8,7 +8,7 @@ API_ID = 27333186
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
 BOT_TOKEN = "6178292287:AAG_n9W0qhOsuPaG1Xs9uP_gMzjWUHbUmww"
 
-CHANNEL_ID = "@domo_collection"
+CHANNEL_ID = "-1002337336723"
 OLD_LINK = "https://t.me/TM_Uploadbot"
 NEW_LINK = "https://t.me/Domo_Uploadbot"
 
@@ -56,8 +56,8 @@ async def update_message(message_id: int):
 
 async def main():
     async with app:
-        start_id = 15
-        end_id = 220
+        start_id = 1
+        end_id = 1415
         for message_id in range(start_id, end_id + 1):
             await update_message(message_id)
             await asyncio.sleep(1.5)  # small delay to avoid flood limits

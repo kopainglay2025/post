@@ -24,33 +24,34 @@ logging.basicConfig(
 app = Client("mks_bot_updater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
+    """
+    Keyboard ထဲက Button အားလုံးကို ပတ်စစ်ပြီး OLD_LINK ပါတာနဲ့ အသစ်လဲပေးမှာပါ။
+    """
     new_keyboard = []
     any_update_needed = False
 
     for row in reply_markup.inline_keyboard:
         new_row = []
         for button in row:
-            # URL button ဖြစ်ပါက စစ်ဆေးမည်
+            # Button မှာ URL ရှိမရှိ အရင်စစ်မယ်
             if button.url:
-                # Link အဟောင်းပါနေသလား စစ်မည်
                 if OLD_LINK in button.url:
-                    new_url = button.url.replace(OLD_LINK, NEW_LINK)
-                    any_update_needed = True # ပြင်ဆင်ရန် လိုအပ်ချက်ရှိကြောင်း မှတ်သားမည်
-                    
+                    # Link အဟောင်းတွေ့ရင် အသစ်လဲမယ်
+                    updated_url = button.url.replace(OLD_LINK, NEW_LINK)
                     new_row.append(
                         types.InlineKeyboardButton(
                             text=button.text,
-                            url=new_url
+                            url=updated_url
                         )
                     )
+                    any_update_needed = True # ပြင်လိုက်ပြီဖြစ်ကြောင်း မှတ်သားမယ်
                 else:
-                    # ပြင်ပြီးသား link ဖြစ်စေ၊ အခြား link ဖြစ်စေ မူလအတိုင်း ပြန်ထည့်မည်
+                    # Link အဟောင်း မဟုတ်ရင် (ပြင်ပြီးသားဆိုရင်) မူလအတိုင်း ပြန်ထည့်မယ်
                     new_row.append(button)
-            
-            # Callback buttons သို့မဟုတ် အခြား button များ
             else:
+                # URL မဟုတ်တဲ့ အခြား button အမျိုးအစား (Callback စတာတွေ) ဖြစ်ရင် မူလအတိုင်း ထားမယ်
                 new_row.append(button)
-
+        
         new_keyboard.append(new_row)
 
     return types.InlineKeyboardMarkup(new_keyboard), any_update_needed

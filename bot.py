@@ -1,122 +1,85 @@
 import asyncio
 import logging
-from pyrogram import Client
+from pyrogram import Client, types
 from pyrogram.errors import FloodWait, RPCError
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-# ========= CONFIG =========
+# ====== Config ======
 API_ID = 27333186
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
 BOT_TOKEN = "6482888257:AAFycxg9uulw_KBbdvL_WRHlAayElZZyz7o"
-
 CHANNEL_ID = "@applemyanmar"
-
 OLD_LINK = "https://t.me/TM_Uploadbot"
 NEW_LINK = "https://t.me/Domo_Uploadbot"
+start_id = 25
+end_id = 1415
 
-DELAY = 1.3   # anti flood
-LIMIT = 0     # 0 = no limit (full history)
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-app = Client(
-    "next_level_updater",
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN
-)
+app = Client("mks_bot_ddhjriupdater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-# ========= BUTTON FIX =========
-def rebuild_buttons(markup: InlineKeyboardMarkup):
+def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
+    new_keyboard = []
     changed = False
-    keyboard = []
 
-    for row in markup.inline_keyboard:
+    for row in reply_markup.inline_keyboard:
         new_row = []
-        for btn in row:
-            if btn.url:
-                new_url = btn.url
-                if OLD_LINK in new_url:
-                    new_url = new_url.replace(OLD_LINK, NEW_LINK)
+        for button in row:
+            if button.url:
+                if OLD_LINK in button.url:
+                    new_url = button.url.replace(OLD_LINK, NEW_LINK)
                     changed = True
+                else:
+                    new_url = button.url
 
+                # ⚠️ ALWAYS rebuild button
                 new_row.append(
-                    InlineKeyboardButton(
-                        text=btn.text,
+                    types.InlineKeyboardButton(
+                        text=button.text,
                         url=new_url
                     )
                 )
             else:
+                # callback_data button (safe rebuild)
                 new_row.append(
-                    InlineKeyboardButton(
-                        text=btn.text,
-                        callback_data=btn.callback_data
+                    types.InlineKeyboardButton(
+                        text=button.text,
+                        callback_data=button.callback_data
                     )
                 )
-        keyboard.append(new_row)
 
-    return InlineKeyboardMarkup(keyboard), changed
+        new_keyboard.append(new_row)
 
-# ========= CAPTION / TEXT FIX =========
-def replace_text_links(text: str):
-    if not text:
-        return text, False
+    return types.InlineKeyboardMarkup(new_keyboard), changed
 
-    if OLD_LINK in text:
-        return text.replace(OLD_LINK, NEW_LINK), True
+async def update_message(message_id: int):
+    """Update a single channel message by ID."""
+    try:
+        message = await app.get_messages(CHANNEL_ID, message_id)
+        if message.reply_markup:
+            new_markup, changed = replace_buttons(message.reply_markup)
+            if changed:
+                try:
+                    await message.edit_reply_markup(reply_markup=new_markup)
+                    logging.info(f"Updated message {message_id}")
+                except FloodWait as e:
+                    logging.warning(f"Flood wait {e.value}s for message {message_id}")
+                    await asyncio.sleep(e.value)
+                except RPCError as e:
+                    logging.error(f"Failed to edit message {message_id}: {e}")
+            else:
+                logging.info(f"No buttons to update in message {message_id}")
+        else:
+            logging.info(f"Message {message_id} has no buttons")
+    except RPCError as e:
+        logging.error(f"Failed to fetch message {message_id}: {e}")
 
-    return text, False
-
-# ========= MAIN =========
-async def run():
+async def main():
     async with app:
-        count = 0
-        async for msg in app.get_chat_history(CHANNEL_ID, limit=LIMIT):
-            try:
-                if not msg:
-                    continue
-
-                edited = False
-
-                # ---- BUTTONS ----
-                if msg.reply_markup:
-                    new_markup, btn_changed = rebuild_buttons(msg.reply_markup)
-                else:
-                    new_markup, btn_changed = None, False
-
-                # ---- TEXT / CAPTION ----
-                if msg.caption:
-                    new_text, text_changed = replace_text_links(msg.caption)
-                elif msg.text:
-                    new_text, text_changed = replace_text_links(msg.text)
-                else:
-                    new_text, text_changed = None, False
-
-                if not (btn_changed or text_changed):
-                    continue
-
-                await msg.edit(
-                    text=new_text if msg.text else None,
-                    caption=new_text if msg.caption else None,
-                    reply_markup=new_markup if btn_changed else msg.reply_markup
-                )
-
-                count += 1
-                logging.info(f"✅ Updated message ID: {msg.id}")
-
-                await asyncio.sleep(DELAY)
-
-            except FloodWait as e:
-                logging.warning(f"⏳ FloodWait {e.value}s")
-                await asyncio.sleep(e.value)
-
-            except RPCError as e:
-                logging.error(f"❌ Message {msg.id} failed: {e}")
-
-        logging.info(f"🎉 Finished! Total updated: {count}")
+        for message_id in range(start_id, end_id + 1):
+            await update_message(message_id)
+            await asyncio.sleep(1.5)  # small delay to avoid flood limits
+        print(f"Finished updating messages {start_id} to {end_id}")
 
 if __name__ == "__main__":
-    app.run(run())
+    app.run(main())

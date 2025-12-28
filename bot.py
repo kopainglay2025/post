@@ -60,7 +60,7 @@ async def update_message(message_id: int):
 
 async def main():
     async with app:
-        start_id = 1
+        start_id = 25
         end_id = 1415
         for message_id in range(start_id, end_id + 1):
             await update_message(message_id)

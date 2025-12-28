@@ -8,8 +8,8 @@ API_ID = 27333186
 API_HASH = "434cc8a51ba304ea539c19de850ba2b3"
 BOT_TOKEN = "6482888257:AAFycxg9uulw_KBbdvL_WRHlAayElZZyz7o"
 CHANNEL_ID = "@applemyanmar"
-OLD_LINK = "https://t.me/TM_Uploadbot"
-NEW_LINK = "https://t.me/Domo_Uploadbot"
+#OLD_LINK = "https://t.me/TM_Uploadbot"
+#NEW_LINK = "https://t.me/Domo_Uploadbot"
 START_ID = 25
 END_ID = 1415
 
@@ -21,33 +21,41 @@ logging.basicConfig(
 
 app = Client("mks_bot_updater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
+from urllib.parse import urlparse
+
+OLD_BOT = "TM_Uploadbot"
+NEW_BOT = "Domo_Uploadbot"
+
 def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
-    """
-    Button တိုင်းကို ပတ်စစ်ပြီး URL အဟောင်းပါတဲ့ Button မှန်သမျှကို 
-    Link အသစ်နဲ့ အစားထိုးပေးပါမည်။ Button ၂ ခုရှိလျှင် ၂ ခုလုံးကို စစ်ဆေးမည်။
-    """
     new_keyboard = []
     any_update_needed = False
 
     for row in reply_markup.inline_keyboard:
         new_row = []
+
         for button in row:
-            # URL button ဖြစ်ပါက စစ်ဆေးမည်
             if button.url:
-                # Link အဟောင်းပါနေသလား စစ်မည်
-                if OLD_LINK in button.url:
-                    new_url = button.url.replace(OLD_LINK, NEW_LINK)
-                    any_update_needed = True # ပြင်ဆင်ရန် လိုအပ်ချက်ရှိကြောင်း မှတ်သားမည်
+                parsed = urlparse(button.url)
+
+                # https://t.me/<botname> ကို စစ်
+                if parsed.netloc == "t.me":
+                    path = parsed.path.lstrip("/")  # TM_Uploadbot or TM_Uploadbot?start=xxx
+
+                    if path.startswith(OLD_BOT):
+                        new_url = button.url.replace(OLD_BOT, NEW_BOT)
+                        any_update_needed = True
+                    else:
+                        new_url = button.url
                 else:
                     new_url = button.url
-                
+
                 new_row.append(
                     types.InlineKeyboardButton(
                         text=button.text,
                         url=new_url
                     )
                 )
-            # Callback buttons များကို မပျက်အောင် ပြန်ထည့်ပေးမည်
+
             elif button.callback_data:
                 new_row.append(
                     types.InlineKeyboardButton(
@@ -55,7 +63,7 @@ def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
                         callback_data=button.callback_data
                     )
                 )
-            # Switch Inline buttons များရှိပါက ပြန်ထည့်ပေးမည်
+
             elif button.switch_inline_query is not None:
                 new_row.append(
                     types.InlineKeyboardButton(

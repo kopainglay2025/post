@@ -16,24 +16,37 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 app = Client("mks_bot_ddhjriupdater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
-    """Replace old links with new ones in button markup."""
     new_keyboard = []
     changed = False
-    
+
     for row in reply_markup.inline_keyboard:
         new_row = []
         for button in row:
-            # Button မှာ URL ရှိမရှိနဲ့ OLD_LINK ပါမပါ စစ်ဆေးမယ်
-            if button.url and OLD_LINK in button.url:
-                new_url = button.url.replace(OLD_LINK, NEW_LINK)
-                # URL အသစ်နဲ့ button အသစ်တစ်ခု တည်ဆောက်မယ်
-                new_row.append(types.InlineKeyboardButton(text=button.text, url=new_url))
-                changed = True
+            if button.url:
+                if OLD_LINK in button.url:
+                    new_url = button.url.replace(OLD_LINK, NEW_LINK)
+                    changed = True
+                else:
+                    new_url = button.url
+
+                # ⚠️ ALWAYS rebuild button
+                new_row.append(
+                    types.InlineKeyboardButton(
+                        text=button.text,
+                        url=new_url
+                    )
+                )
             else:
-                # ပြောင်းလဲစရာမလိုရင် မူလ button အတိုင်း ပြန်ထည့်မယ်
-                new_row.append(button)
+                # callback_data button (safe rebuild)
+                new_row.append(
+                    types.InlineKeyboardButton(
+                        text=button.text,
+                        callback_data=button.callback_data
+                    )
+                )
+
         new_keyboard.append(new_row)
-        
+
     return types.InlineKeyboardMarkup(new_keyboard), changed
 
 async def update_message(message_id: int):

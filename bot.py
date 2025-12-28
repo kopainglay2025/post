@@ -24,10 +24,6 @@ logging.basicConfig(
 app = Client("mks_bot_updater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
-    """
-    Button တိုင်းကို ပတ်စစ်ပြီး URL အဟောင်းပါတဲ့ Button မှန်သမျှကို 
-    Link အသစ်နဲ့ အစားထိုးပေးပါမည်။ Button ၂ ခုရှိလျှင် ၂ ခုလုံးကို စစ်ဆေးမည်။
-    """
     new_keyboard = []
     any_update_needed = False
 
@@ -40,31 +36,18 @@ def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
                 if OLD_LINK in button.url:
                     new_url = button.url.replace(OLD_LINK, NEW_LINK)
                     any_update_needed = True # ပြင်ဆင်ရန် လိုအပ်ချက်ရှိကြောင်း မှတ်သားမည်
+                    
+                    new_row.append(
+                        types.InlineKeyboardButton(
+                            text=button.text,
+                            url=new_url
+                        )
+                    )
                 else:
-                    new_url = button.url
-                
-                new_row.append(
-                    types.InlineKeyboardButton(
-                        text=button.text,
-                        url=new_url
-                    )
-                )
-            # Callback buttons များကို မပျက်အောင် ပြန်ထည့်ပေးမည်
-            elif button.callback_data:
-                new_row.append(
-                    types.InlineKeyboardButton(
-                        text=button.text,
-                        callback_data=button.callback_data
-                    )
-                )
-            # Switch Inline buttons များရှိပါက ပြန်ထည့်ပေးမည်
-            elif button.switch_inline_query is not None:
-                new_row.append(
-                    types.InlineKeyboardButton(
-                        text=button.text,
-                        switch_inline_query=button.switch_inline_query
-                    )
-                )
+                    # ပြင်ပြီးသား link ဖြစ်စေ၊ အခြား link ဖြစ်စေ မူလအတိုင်း ပြန်ထည့်မည်
+                    new_row.append(button)
+            
+            # Callback buttons သို့မဟုတ် အခြား button များ
             else:
                 new_row.append(button)
 

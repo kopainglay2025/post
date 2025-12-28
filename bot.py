@@ -16,20 +16,40 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 app = Client("mks_bot_ddhjriupdater", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
-    """Replace old links with new ones in button markup."""
     new_keyboard = []
     changed = False
+
     for row in reply_markup.inline_keyboard:
         new_row = []
         for button in row:
-            if button.url and OLD_LINK in button.url:
-                new_url = button.url.replace(OLD_LINK, NEW_LINK)
-                new_row.append(types.InlineKeyboardButton(text=button.text, url=new_url))
-                changed = True
+            if button.url:
+                if OLD_LINK in button.url:
+                    new_url = button.url.replace(OLD_LINK, NEW_LINK)
+                    changed = True
+                else:
+                    new_url = button.url
+
+                # 🔴 ALWAYS create NEW button object
+                new_row.append(
+                    types.InlineKeyboardButton(
+                        text=button.text,
+                        url=new_url
+                    )
+                )
             else:
-                new_row.append(button)
+                # callback_data button case
+                new_row.append(
+                    types.InlineKeyboardButton(
+                        text=button.text,
+                        callback_data=button.callback_data
+                    )
+                )
+
         new_keyboard.append(new_row)
+
     return types.InlineKeyboardMarkup(new_keyboard), changed
+
+
 
 async def update_message(message_id: int):
     """Update a single channel message by ID."""

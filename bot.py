@@ -29,7 +29,7 @@ def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
                 else:
                     new_url = button.url
 
-                # ⚠️ ALWAYS rebuild button
+                # ✅ ALWAYS create new button
                 new_row.append(
                     types.InlineKeyboardButton(
                         text=button.text,
@@ -37,7 +37,7 @@ def replace_buttons(reply_markup: types.InlineKeyboardMarkup):
                     )
                 )
             else:
-                # callback_data button (safe rebuild)
+                # callback button / text-only
                 new_row.append(
                     types.InlineKeyboardButton(
                         text=button.text,
